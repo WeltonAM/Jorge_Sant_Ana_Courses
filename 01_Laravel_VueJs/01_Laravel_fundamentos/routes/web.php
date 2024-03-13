@@ -23,7 +23,7 @@ Route::prefix('/app')->group(function() {
 
     Route::get('/clientes', [ClienteController::class, 'clientes'])->name('clientes');
 
-    Route::get('/fornecedores', [FornecedorController::class, 'fornecedores'])->name('fornecedorres');
+    Route::get('/fornecedores', [FornecedorController::class, 'index'])->name('fornecedores');
 
     Route::get('/produtos', [ProdutoController::class, 'produtos'])->name('produtos');
 });
