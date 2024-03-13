@@ -8,5 +8,21 @@
     </head>
     <body class="antialiased">
         <h3>Principal</h3>
+
+        <ul>
+            <li>
+                <a href="/">Principal</a>
+            </li>
+            <li>
+                <a href="/sobre">Sobre Nós</a>
+            </li>
+            <li>
+                <a href="/contato">Contato</a>
+            </li>
+        </ul>
+
+        <main>
+            @yield('content')
+        </main>
     </body>
 </html>
