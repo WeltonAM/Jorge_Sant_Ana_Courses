@@ -11,13 +11,13 @@
 
         <ul>
             <li>
-                <a href="/">Principal</a>
+                <a href="{{route('principal')}}">Principal</a>
             </li>
             <li>
-                <a href="/sobre">Sobre Nós</a>
+                <a href="{{route('sobre')}}">Sobre Nós</a>
             </li>
             <li>
-                <a href="/contato">Contato</a>
+                <a href="{{route('contato')}}">Contato</a>
             </li>
         </ul>
 
