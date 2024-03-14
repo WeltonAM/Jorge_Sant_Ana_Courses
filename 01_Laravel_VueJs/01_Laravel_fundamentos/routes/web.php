@@ -17,6 +17,7 @@ Route::get('/login', [LoginController::class, 'login'])->name('login');
 Route::get('/sobre', [SobreNosController::class, 'sobre'])->name('sobre');
 
 Route::get('/contato', [ContatoController::class, 'contato'])->name('contato');
+Route::post('/contato', [ContatoController::class, 'store']);
 
 //APP
 Route::prefix('/app')->group(function() {

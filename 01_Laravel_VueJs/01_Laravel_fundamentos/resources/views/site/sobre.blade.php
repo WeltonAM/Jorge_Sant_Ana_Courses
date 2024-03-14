@@ -1,5 +1,7 @@
 @extends('welcome')
 
+@section('titulo', 'Sobre Nós')
+
 @section('content')
     <div class="conteudo-pagina">
         <div class="titulo-pagina">
