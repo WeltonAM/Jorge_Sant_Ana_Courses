@@ -10,7 +10,15 @@
 
         <div class="informacao-pagina">
             <div class="contato-principal">
-                @component('components.formulario', ['action' => '\contato', 'metodo' => 'post', 'classe' => 'borda-preta'])
+                @component(
+                    'components.formulario',
+                    [
+                        'action' => '\contato',
+                        'metodo' => 'post',
+                        'classe' => 'borda-preta',
+                        'data' => $motivo_contatos
+                    ],
+                )
                     <p>A nossa equipe analisará a sua mensagem e retornaremos o mais brevemente possível.</p>
                     <p>Nosso tempo médio de resposta é de 48h.</p>
                 @endcomponent

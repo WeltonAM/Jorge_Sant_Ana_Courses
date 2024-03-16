@@ -15,9 +15,13 @@
     <body class="antialiased d-flex flex-column">
         @include('components.menu')
 
+        @if($errors->any())
+            @include('components.feedBack', ['msg' => $errors->first(), 'msgClass' => 'danger'])
+        @endif
+
         @include('components.feedBack', ['msg' => $msg ?? null, 'msgClass' => $msgClass ?? ''])
 
-        <div class="conteudo-destaque vh-100">
+        <div class="conteudo-destaque">
             @yield('content')
         </div>
 
