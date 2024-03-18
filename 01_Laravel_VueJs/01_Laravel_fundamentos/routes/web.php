@@ -14,6 +14,7 @@ use App\Http\Controllers\ProdutoController;
 Route::get('/', [PrincipalController::class, 'principal'])->name('principal');
 
 Route::get('/login', [LoginController::class, 'login'])->name('login');
+Route::post('/login', [LoginController::class, 'autenticar'])->name('login');
 
 Route::get('/sobre', [SobreNosController::class, 'sobre'])->name('sobre');
 
@@ -23,11 +24,11 @@ Route::controller(ContatoController::class)->group(function () {
 });
 
 //APP
-Route::prefix('/app')->group(function() {
+Route::middleware('autenticacao:padrao')->prefix('/app')->group(function() {
 
-    Route::get('/clientes', [ClienteController::class, 'clientes'])->name('clientes');
+    // Route::get('/clientes', [ClienteController::class, 'clientes'])->name('clientes');
 
     Route::get('/fornecedores', [FornecedorController::class, 'index'])->name('fornecedores');
 
-    Route::get('/produtos', [ProdutoController::class, 'produtos'])->name('produtos');
+    // Route::get('/produtos', [ProdutoController::class, 'produtos'])->name('produtos');
 });
