@@ -18,11 +18,12 @@
                 ['rota' => route('principal'), 'texto' => 'Principal'],
                 ['rota' => route('sobre'), 'texto' => 'Sobre Nós'],
                 ['rota' => route('contato'), 'texto' => 'Contato'],
+                ['rota' => route('login'), 'texto' => 'Login'],
             ]
         ])
 
         @if(session('msg'))
-            @include('components.feedBack', ['msg' => session('msg') ?? null, 'msgClass' => 'danger' ?? ''])
+            @include('components.feedBack', ['msg' => session('msg') ?? null, 'msgClass' => $msgClass ?? 'primary'])
         @endif
 
         @if($errors->any())

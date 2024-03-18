@@ -69,6 +69,5 @@ class Kernel extends HttpKernel
 
         'log.acesso' => \App\Http\Middleware\LogAcessoMiddleware::class,
         'autenticacao' => \App\Http\Middleware\AutenticacaoMiddleware::class,
-
     ];
 }

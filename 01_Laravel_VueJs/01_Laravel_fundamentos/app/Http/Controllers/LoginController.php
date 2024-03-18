@@ -31,9 +31,8 @@ class LoginController extends Controller
         $userModel = new User();
         $usuario = $userModel->where('email', $email)->where('password', $senha)->get()->first();
 
-        session_start();
-
         if($usuario) {
+            session_start();
             $_SESSION['nome'] = $usuario->name;
             $_SESSION['email'] = $usuario->email;
 
@@ -45,10 +44,7 @@ class LoginController extends Controller
 
     public function logout(Request $req)
     {
-
-        session_start();
-
-        // $_SESSION['nome'] = $usuario->name;
-        // $_SESSION['email'] = $usuario->email;
+        session_destroy();
+        return redirect('/')->with(['msg' => "Até breve!", 'msgClass' => 'success']);
     }
 }

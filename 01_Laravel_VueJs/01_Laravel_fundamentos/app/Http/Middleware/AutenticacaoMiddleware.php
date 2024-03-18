@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class AutenticacaoMiddleware
@@ -13,7 +14,7 @@ class AutenticacaoMiddleware
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next, String $metodo_autenticacao): Response
+    public function handle(Request $request, Closure $next): Response
     {
         // if($metodo_autenticacao == 'padrao') {
         //     echo 'Parâmetro de middleware';

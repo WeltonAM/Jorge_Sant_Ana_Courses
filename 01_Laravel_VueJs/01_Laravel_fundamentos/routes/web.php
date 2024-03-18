@@ -29,7 +29,7 @@ Route::controller(ContatoController::class)->group(function () {
 });
 
 //APP
-Route::middleware('autenticacao:padrao')->prefix('/app')->group(function() {
+Route::middleware('autenticacao')->prefix('/app')->group(function() {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -37,7 +37,10 @@ Route::middleware('autenticacao:padrao')->prefix('/app')->group(function() {
 
     Route::get('/clientes', [ClienteController::class, 'index'])->name('clientes');
 
-    Route::get('/fornecedores', [FornecedorController::class, 'index'])->name('fornecedores');
+    Route::post('/fornecedores', [FornecedorController::class, 'store'])->name('fornecedores');
+    Route::get('/fornecedores/{create?}', [FornecedorController::class, 'index'])->name('fornecedores');
+    Route::get('/fornecedores/edit/{id}', [FornecedorController::class, 'edit'])->name('fornecedores.edit');
+    Route::get('/fornecedores/delete/{id}', [FornecedorController::class, 'delete'])->name('fornecedores.delete');
 
     Route::get('/produtos', [ProdutoController::class, 'index'])->name('produtos');
 });

@@ -18,11 +18,12 @@
                 ['rota' => route('produtos'), 'texto' => 'Produtos'],
                 ['rota' => route('clientes'), 'texto' => 'Clientes'],
                 ['rota' => route('fornecedores'), 'texto' => 'Fornecedores'],
+                ['rota' => route('sair'), 'texto' => 'Sair'],
             ]
         ])
 
         @if(session('msg'))
-            @include('components.feedBack', ['msg' => session('msg') ?? null, 'msgClass' => 'danger' ?? ''])
+            @include('components.feedBack', ['msg' => session('msg') ?? null, 'msgClass' => $msgClass ?? ''])
         @endif
 
         @if($errors->any())
@@ -34,6 +35,13 @@
         <div class="conteudo-destaque">
             @yield('content')
         </div>
+
+        <footer class="absolute footer p-3 border-top mt-3" style="background-color: rgba(75, 119, 190, 0.2);">
+            <div class="container">
+                <p class="text-center mb-0 text-black-50">App Super Gestão</p>
+                <p class="text-center text-black-50">Todos os direitos reservados &copy; <?php echo date('Y'); ?></p>
+            </div>
+        </footer>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     </body>
