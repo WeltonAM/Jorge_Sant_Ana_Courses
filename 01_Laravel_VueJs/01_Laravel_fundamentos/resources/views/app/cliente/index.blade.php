@@ -1,12 +1,12 @@
 @extends('app.index')
 
-@section('titulo', 'Fornecedores')
+@section('titulo', 'Clientes')
 @section('content')
 
 <div class="p-5">
-    <h1 class="text-dark">Fornecedores</h1>
+    <h1 class="text-dark">Clientes</h1>
 
-    @if (isset($fornecedores) && $fornecedores->count() > 0)
+    {{-- @if (isset($fornecedores) && $fornecedores->count() > 0)
         <table class="table" id="fornecedoresTable">
             <thead>
                 <tr>
@@ -29,26 +29,23 @@
                     @endforeach
                 </tbody>
         </table>
-    @else
-        <p>Nenhum fornecedor cadastrado</p>
-    @endif
+    @else --}}
+        {{-- <p>Nenhum fornecedor cadastrado</p>
+    @endif --}}
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
-
 <script>
-    $(document).ready(function() {
-        $('#fornecedoresTable').DataTable({
-            language: {
-                url:"https://cdn.datatables.net/plug-ins/1.11.5/i18n/pt-BR.json"
-            }
-        });
+    // $(document).ready(function() {
+    //     $('#fornecedoresTable').DataTable({
+    //         language: {
+    //             url:"https://cdn.datatables.net/plug-ins/1.11.5/i18n/pt-BR.json"
+    //         }
+    //     });
 
-        $('#fornecedoresTable_previous').css('display', 'none');
-        $('#fornecedoresTable_next').css('display', 'none');
-    });
+    //     $('#fornecedoresTable_previous').css('display', 'none');
+    //     $('#fornecedoresTable_next').css('display', 'none');
+    // });
 </script>
 
 @endsection

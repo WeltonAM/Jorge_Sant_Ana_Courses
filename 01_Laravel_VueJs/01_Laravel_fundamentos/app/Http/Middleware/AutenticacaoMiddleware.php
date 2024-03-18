@@ -15,14 +15,16 @@ class AutenticacaoMiddleware
      */
     public function handle(Request $request, Closure $next, String $metodo_autenticacao): Response
     {
-        if($metodo_autenticacao == 'padrao') {
-            echo 'Parâmetro de middleware';
-        }
+        // if($metodo_autenticacao == 'padrao') {
+        //     echo 'Parâmetro de middleware';
+        // }
 
-        if(true) {
+        session_start();
+
+        if(isset($_SESSION['email']) && $_SESSION['nome'] != '') {
             return $next($request);
         } else {
-            return Response('Acesso negado!');
+            return redirect('login');
         }
     }
 }

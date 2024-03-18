@@ -8,9 +8,9 @@
 
     <div class="menu">
         <ul>
-            <li><a href="{{ route('principal') }}">Principal</a></li>
-            <li><a href="{{ route('sobre') }}">Sobre Nós</a></li>
-            <li><a href="{{ route('contato') }}">Contato</a></li>
+            @foreach($rotas as $r)
+                @include('components.menuItem', ['rota' => $r['rota'], 'texto' => $r['texto']])
+            @endforeach
         </ul>
     </div>
 </div>

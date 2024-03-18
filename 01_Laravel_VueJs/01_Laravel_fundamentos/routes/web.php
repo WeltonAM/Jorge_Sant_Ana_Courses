@@ -7,8 +7,13 @@ use App\Http\Controllers\SobreNosController;
 use App\Http\Controllers\ContatoController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FornecedorController;
 use App\Http\Controllers\ProdutoController;
+
+Route::fallback(function () {
+    return redirect()->route('principal')->with('msg', 'A página que você tentou acessar não existe.');
+});
 
 //SITE
 Route::get('/', [PrincipalController::class, 'principal'])->name('principal');
@@ -26,9 +31,13 @@ Route::controller(ContatoController::class)->group(function () {
 //APP
 Route::middleware('autenticacao:padrao')->prefix('/app')->group(function() {
 
-    // Route::get('/clientes', [ClienteController::class, 'clientes'])->name('clientes');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    Route::get('/sair', [LoginController::class, 'logout'])->name('sair');
+
+    Route::get('/clientes', [ClienteController::class, 'index'])->name('clientes');
 
     Route::get('/fornecedores', [FornecedorController::class, 'index'])->name('fornecedores');
 
-    // Route::get('/produtos', [ProdutoController::class, 'produtos'])->name('produtos');
+    Route::get('/produtos', [ProdutoController::class, 'index'])->name('produtos');
 });

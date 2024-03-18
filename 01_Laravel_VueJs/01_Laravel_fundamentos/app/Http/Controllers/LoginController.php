@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class LoginController extends Controller
 {
-    public function login() {
+    public function login(Request $req) {
         return view('site.login');
     }
 
@@ -24,6 +25,30 @@ class LoginController extends Controller
 
         $req->validate($regrasValidacao, $feedBack);
 
-        return view('site.login');
+        $email = $req['email'];
+        $senha = $req['senha'];
+
+        $userModel = new User();
+        $usuario = $userModel->where('email', $email)->where('password', $senha)->get()->first();
+
+        session_start();
+
+        if($usuario) {
+            $_SESSION['nome'] = $usuario->name;
+            $_SESSION['email'] = $usuario->email;
+
+            return redirect('/app/dashboard')->with(['msg' => "Olá, $usuario->name", 'msgClass' => 'success']);
+        } else {
+            return view('site.login', ['msg' => 'Usuário inválido', 'msgClass' => 'danger']);
+        }
+    }
+
+    public function logout(Request $req)
+    {
+
+        session_start();
+
+        // $_SESSION['nome'] = $usuario->name;
+        // $_SESSION['email'] = $usuario->email;
     }
 }
