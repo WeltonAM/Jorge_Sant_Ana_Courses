@@ -19,13 +19,26 @@ class ContatoController extends Controller
 
         $contato = new SiteContato();
 
-        $req->validate([
+        $regrasValidacao = [
             'nome' => 'required|min:3|max:40|unique:site_contatos',
             'telefone' => 'required',
             'email' => 'email',
             'motivo_contatos_id' => 'required',
             'mensagem' => 'required|max:2000',
-        ]);
+        ];
+
+        $feedBack = [
+            'required' => 'O campo [:attribute] deve ser preenchido.',
+
+            'nome.min' => 'O campo [Nome] deve ter no mínimo 3 caracteres.',
+            'nome.max' => 'O campo [Nome] deve ter no máximo 40 caracteres.',
+            'nome.unique' => 'O campo [Nome] já está em uso.',
+            'email.email' => 'O campo [Email] deve ter um email válido.',
+            'motivo_contatos_id.required' => 'O campo [Motivo Contato] precisa ser preenchido.',
+            'mensagem.max' => 'O campo [Mensagem] deve ter no máximo 2000 caracteres.',
+        ];
+
+        $req->validate($regrasValidacao, $feedBack);
 
         $contato->nome = $req['nome'];
         $contato->telefone = $req['telefone'];
