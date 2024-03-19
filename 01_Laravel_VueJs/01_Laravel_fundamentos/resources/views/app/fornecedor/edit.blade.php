@@ -11,10 +11,11 @@
             @component(
                 'app.fornecedor.formulario',
                 [
-                    'action' => '\app\fornecedores',
+                    'action' => "/app/fornecedores/edit/{$fornecedor->id}",
                     'metodo' => 'post',
                     'classe' => 'borda-preta',
-                    'data' => $fornecedor
+                    'data' => $fornecedor,
+                    'btnCancelar' => true,
                 ],
             )
             @endcomponent

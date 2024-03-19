@@ -23,7 +23,8 @@
                 [
                     'action' => '\app\fornecedores',
                     'metodo' => 'post',
-                    'classe' => 'borda-preta'
+                    'classe' => 'borda-preta',
+                    'btnCancelar' => true,
                 ],
             )
             @endcomponent

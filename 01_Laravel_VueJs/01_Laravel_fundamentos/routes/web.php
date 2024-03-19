@@ -37,8 +37,9 @@ Route::middleware('autenticacao')->prefix('/app')->group(function() {
 
     Route::get('/clientes', [ClienteController::class, 'index'])->name('clientes');
 
-    Route::post('/fornecedores', [FornecedorController::class, 'store'])->name('fornecedores');
+    Route::post('/fornecedores', [FornecedorController::class, 'store'])->name('fornecedores.create');
     Route::get('/fornecedores/{create?}', [FornecedorController::class, 'index'])->name('fornecedores');
+    Route::post('/fornecedores/edit/{fornecedorId}', [FornecedorController::class, 'update'])->name('fornecedores.update');
     Route::get('/fornecedores/edit/{id}', [FornecedorController::class, 'edit'])->name('fornecedores.edit');
     Route::get('/fornecedores/delete/{id}', [FornecedorController::class, 'delete'])->name('fornecedores.delete');
 

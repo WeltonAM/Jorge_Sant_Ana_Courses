@@ -23,7 +23,7 @@
         ])
 
         @if(session('msg'))
-            @include('components.feedBack', ['msg' => session('msg') ?? null, 'msgClass' => $msgClass ?? ''])
+            @include('components.feedBack', ['msg' => session('msg') ?? null, 'msgClass' => session('msgClass') ?? 'primary'])
         @endif
 
         @if($errors->any())
