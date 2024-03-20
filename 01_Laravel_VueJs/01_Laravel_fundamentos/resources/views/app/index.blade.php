@@ -36,7 +36,7 @@
             @yield('content')
         </div>
 
-        <footer class="absolute footer p-3 border-top mt-3" style="background-color: rgba(75, 119, 190, 0.2);">
+        <footer class="footer p-3 border-top mt-3" style="background-color: rgba(75, 119, 190, 0.2);">
             <div class="container">
                 <p class="text-center mb-0 text-black-50">App Super Gestão</p>
                 <p class="text-center text-black-50">Todos os direitos reservados &copy; <?php echo date('Y'); ?></p>
