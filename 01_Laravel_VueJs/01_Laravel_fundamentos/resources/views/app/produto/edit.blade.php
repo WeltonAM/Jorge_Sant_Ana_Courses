@@ -15,6 +15,7 @@
                     'metodo' => 'post',
                     'classe' => 'borda-preta',
                     'data' => $produto,
+                    'unidades' => $unidades,
                     'btnCancelar' => true,
                 ],
             )

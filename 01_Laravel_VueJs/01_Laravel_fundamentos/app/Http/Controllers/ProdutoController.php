@@ -3,32 +3,39 @@
 namespace App\Http\Controllers;
 
 use App\Models\Produto;
-
+use App\Models\Unidade;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class ProdutoController extends Controller
 {
-    public function index(Request $req) {
+    public function index(Request $req)
+    {
         $produtos = Produto::all();
+        $unidades = Unidade::all();
 
-        return view('app.produto.index', ['produtos' => $produtos, 'create' => $req['create'] ?? null]);
+        return view('app.produto.index', ['produtos' => $produtos, 'unidades' => $unidades, 'create' => $req['create'] ?? null]);
     }
 
     protected function validateRequest(Request $request)
     {
         return Validator::make($request->all(), [
             'nome' => 'required|min:3|max:40',
-            'site' => 'required',
-            'uf' => 'required|min:2|max:2',
-            'email' => 'email'
+            'descricao' => 'required|min:3|max:2000',
+            'peso' => 'required|integer',
+            'unidade' => 'exists:unidades,id'
         ], [
             'required' => 'O campo [:attribute] deve ser preenchido',
-            'nome.min' => 'O campo [nome] deve ter no mínimo 3 caracteres.',
-            'nome.max' => 'O campo [nome] deve ter no máximo 40 caracteres.',
-            'uf.min' => 'O campo [estado] deve ter no mínimo 2 caracteres.',
-            'uf.max' => 'O campo [estado] deve ter no máximo 2 caracteres.',
-            'email.email' => 'O campo [email] não foi preenchido corretamente.'
+
+            'nome.min' => 'O campo [Nome] deve ter no mínimo 3 caracteres.',
+            'nome.max' => 'O campo [Nome] deve ter no máximo 40 caracteres.',
+
+            'descricao.min' => 'O campo [Descrição] deve ter no mínimo 3 caracteres.',
+            'descricao.max' => 'O campo [Descrição] deve ter no máximo 40 caracteres.',
+
+            'peso.integer' => '[Peso] deve conter somente números.',
+
+            'unidade.exists' => '[Unidade] não salva.',
         ]);
     }
 
@@ -42,8 +49,21 @@ class ProdutoController extends Controller
             return redirect('/app/produtos/create')->withErrors($validator)->withInput();
         }
 
+        $nome = $request->input('nome');
+        $descricao = $request->input('descricao');
+        $peso = $request->input('peso');
+        $unidade_id = $request->input('unidade');
+
         try {
-            Produto::create($request->all());
+            $produto = new Produto();
+
+            $produto->nome = $nome;
+            $produto->descricao = $descricao;
+            $produto->peso = $peso;
+            $produto->unidade_id = $unidade_id;
+
+            $produto->save();
+
             $msg = 'Produto cadastrado com sucesso.';
             $msgClass = 'success';
         } catch (\Exception $e) {
@@ -58,12 +78,13 @@ class ProdutoController extends Controller
     public function edit($id)
     {
         $produto = Produto::find($id);
+        $unidades = Unidade::all();
 
         if (!$produto) {
-            return redirect()->route('produtos.index')->with(['msg' => 'Produto não encontrado.', 'msgClass' => 'danger']);
+            return redirect()->route('produtos.index')->with(['msg' => 'Produto não encontrado.', 'msgClass' => 'danger', 'unidades' => $unidades]);
         }
 
-        return view('app.produto.edit', compact('produto'));
+        return view('app.produto.edit', compact(['produto', 'unidades']));
     }
 
     public function update(Request $request, $produtoId)
@@ -71,14 +92,23 @@ class ProdutoController extends Controller
         $edit = '';
         $validator = $this->validateRequest($request);
 
-        $data = $request->except('_token');
-
         if ($validator->fails()) {
-            return redirect('/app/produtos/edit')->withErrors($validator)->withInput();
+            return redirect("/app/produtos/$produtoId/edit")->withErrors($validator)->withInput();
         }
 
         try {
-            Produto::where('id', $produtoId)->update($data);
+            $produto = Produto::find($produtoId);
+            if (!$produto) {
+                return redirect()->route('produtos.index')->with(['msg' => 'Produto não encontrado.', 'msgClass' => 'danger']);
+            }
+
+            $produto->nome = $request->input('nome');
+            $produto->descricao = $request->input('descricao');
+            $produto->peso = $request->input('peso');
+            $produto->unidade_id = $request->input('unidade');
+
+            $produto->save();
+
             $msg = 'Produto atualizado com sucesso.';
             $msgClass = 'success';
         } catch (\Exception $e) {
@@ -98,7 +128,6 @@ class ProdutoController extends Controller
             $msg = 'Produto deletado com sucesso.';
             $msgClass = 'success';
         } catch (\Exception $e) {
-            dd($e);
             $msg = 'Erro ao deletar produto.';
             $msgClass = 'danger';
         }

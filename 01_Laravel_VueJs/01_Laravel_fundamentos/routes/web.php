@@ -10,6 +10,7 @@ use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FornecedorController;
 use App\Http\Controllers\ProdutoController;
+use App\Http\Controllers\ProdutoDetalheController;
 
 Route::fallback(function () {
     return redirect()->route('principal')->with('msg', 'A página que você tentou acessar não existe.');
@@ -44,9 +45,14 @@ Route::middleware('autenticacao')->prefix('/app')->group(function() {
     Route::get('/fornecedores/delete/{id}', [FornecedorController::class, 'delete'])->name('fornecedores.delete');
 
     // Route::resource('produtos', "ProdutoController");
-    Route::get('/produtos', [ProdutoController::class, 'index'])->name('produtos');
+    Route::post('/produtos', [ProdutoController::class, 'store'])->name('produtos.create');
     Route::get('/produtos/{create?}', [ProdutoController::class, 'index'])->name('produtos');
     Route::post('/produtos/edit/{produtoId}', [ProdutoController::class, 'update'])->name('produtos.update');
     Route::get('/produtos/edit/{id}', [ProdutoController::class, 'edit'])->name('produtos.edit');
     Route::get('/produtos/delete/{id}', [ProdutoController::class, 'delete'])->name('produtos.delete');
+
+    Route::get('/produto-detalhe/edit/{id}', [ProdutoDetalheController::class, 'edit'])->name('produto-detalhe.edit');
+    Route::post('/produto-detalhe/edit/{id}', [ProdutoDetalheController::class, 'update'])->name('produto-detalhe.update');
+    Route::get('/produto-detalhe/{id}/{create?}', [ProdutoDetalheController::class, 'index'])->name('produto-detalhe.index');
+    Route::post('/produto-detalhe/{id}', [ProdutoDetalheController::class, 'store'])->name('produto-detalhe.store');
 });

@@ -1,5 +1,5 @@
 @if (isset($msg))
-    <div id="toastMessage" class="position-fixed bottom-0 end-0 p-3 fade show" role="alert" aria-live="assertive" aria-atomic="true">
+    <div style="z-index: 999" id="toastMessage" class="position-fixed bottom-0 end-0 p-3 fade show" role="alert" aria-live="assertive" aria-atomic="true">
         <div class="toast-header d-flex justify-content-between">
             <div>
                 <img src={{ asset('img/logo.png') }} class="rounded me-2" alt="...">

@@ -14,30 +14,39 @@
     <br>
 
     <input
-        name="site"
-        value="{{ isset($data->site) ? $data->site : old('site') }}"
+        name="descricao"
+        value="{{ isset($data->descricao) ? $data->descricao : old('descricao') }}"
         type="text"
-        placeholder="Site"
+        placeholder="Descrição"
         class="{{ $classe ?? '' }}"
     >
     <br>
 
     <input
-        name="uf"
-        value="{{ isset($data->uf) ? $data->uf : old('uf') }}"
-        type="text"
-        placeholder="Estado"
+        name="peso"
+        value="{{ isset($data->peso) ? $data->peso : old('peso') }}"
+        type="number"
+        step="0.1"
+        min="1"
+        max="9999"
+        placeholder="Peso"
         class="{{ $classe ?? '' }}"
     >
     <br>
 
-    <input
-        name="email"
-        value="{{ isset($data->email) ? $data->email : old('email') }}"
-        type="text"
-        placeholder="E-mail"
-        class="{{ $classe ?? '' }}"
+    <select
+        name="unidade"
+        class="form-select {{ $classe ?? '' }}"
     >
+        <option>Selecione Unidade de Medida</option>
+
+        @if(isset($unidades))
+            @foreach($unidades as $unidade)
+                <option value="{{ $unidade->id }}" {{ old('unidade') == $unidade->id || (isset($data->unidade_id) && $data->unidade_id == $unidade->id) ? 'selected' : '' }}>{{ $unidade->descricao }}</option>
+            @endforeach
+        @endif
+    </select>
+
     <br>
 
     <div class="d-flex gap-4">
@@ -45,7 +54,7 @@
             <button type="button" id="btn-cancelar" class="btn-sm" style="background-color: red">Cancelar</button>
         @endif
 
-        <button type="submit" class="btn-sm {{ $classe ?? '' }}">{{ isset($data->email) ? 'Editar' : 'Enviar'}}</button>
+        <button type="submit" class="btn-sm {{ $classe ?? '' }}">{{ isset($data->nome) ? 'Editar' : 'Enviar'}}</button>
     </div>
 </form>
 
