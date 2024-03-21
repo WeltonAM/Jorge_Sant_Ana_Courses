@@ -33,7 +33,7 @@
         </div>
 
         <div id="tabelaProduto" style="display: {{ isset($create) ? 'none' : 'block' }};">
-            @if (isset($produtoDetalhe) && $produtoDetalhe != null)
+            @if (isset($produto->produtoDetalhe) && $produto->produtoDetalhe != null)
                 <div class="container mt-5">
                     <div class="row justify-content-center">
                         <div class="col-lg-8">
@@ -47,30 +47,30 @@
                                             <tbody>
                                                 <tr>
                                                     <th scope="row" class="fw-bold">Produto ID:</th>
-                                                    <td class="text-center">{{ $produtoDetalhe->produto_id }}</td>
+                                                    <td class="text-center">{{ $produto->produtoDetalhe->produto_id }}</td>
                                                 </tr>
                                                 <tr>
                                                     <th scope="row" class="fw-bold">Comprimento:</th>
-                                                    <td class="text-center">{{ $produtoDetalhe->comprimento }}</td>
+                                                    <td class="text-center">{{ $produto->produtoDetalhe->comprimento }}</td>
                                                 </tr>
                                                 <tr>
                                                     <th scope="row" class="fw-bold">Largura:</th>
-                                                    <td class="text-center">{{ $produtoDetalhe->largura }}</td>
+                                                    <td class="text-center">{{ $produto->produtoDetalhe->largura }}</td>
                                                 </tr>
                                                 <tr>
                                                     <th scope="row" class="fw-bold">Altura:</th>
-                                                    <td class="text-center">{{ $produtoDetalhe->altura }}</td>
+                                                    <td class="text-center">{{ $produto->produtoDetalhe->altura }}</td>
                                                 </tr>
                                                 <tr>
                                                     <th scope="row" class="fw-bold">Unidade ID:</th>
-                                                    <td class="text-center">{{ $produtoDetalhe->unidade_id }}</td>
+                                                    <td class="text-center">{{ $produto->produtoDetalhe->unidade_id }}</td>
                                                 </tr>
                                             </tbody>
                                         </table>
                                     </div>
 
                                     <div class="card-footer d-flex justify-content-end">
-                                        <a class="btn btn-sm btn-info text-white" href="{{ route('produto-detalhe.edit', ['id' => $produtoDetalhe->id]) }}">Editar detalhes</a>
+                                        <a class="btn btn-sm btn-info text-white" href="{{ route('produto-detalhe.edit', ['id' => $produto->produtoDetalhe->id]) }}">Editar detalhes</a>
                                     </div>
                                 </div>
                             </div>

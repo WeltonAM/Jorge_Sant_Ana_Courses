@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Produto;
 use App\Models\ProdutoDetalhe;
 use App\Models\Unidade;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -13,11 +14,9 @@ class ProdutoDetalheController extends Controller
     public function index(Request $req, $id)
     {
         $produto = Produto::find($id);
-
-        $produtoDetalhe = ProdutoDetalhe::find($produto->id);
         $unidades = Unidade::all();
 
-        return view('app.produto-detalhe.index', ['produto' => $produto, 'produtoDetalhe' => $produtoDetalhe, 'unidades' => $unidades, 'create' => $req['create'] ?? null]);
+        return view('app.produto-detalhe.index', ['produto' => $produto, 'unidades' => $unidades, 'create' => $req['create'] ?? null]);
     }
 
     protected function validateRequest(Request $request)
@@ -66,8 +65,8 @@ class ProdutoDetalheController extends Controller
 
     public function edit($id)
     {
-        $produto = Produto::find($id);
-        $produtoDetalhe = ProdutoDetalhe::find($produto->id);
+        $produtoDetalhe = ProdutoDetalhe::find($id);
+        $produto = Produto::find($produtoDetalhe->produto_id);
         $unidades = Unidade::all();
 
         if (!$produtoDetalhe) {
