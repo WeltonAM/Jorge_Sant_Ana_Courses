@@ -43,5 +43,10 @@ Route::middleware('autenticacao')->prefix('/app')->group(function() {
     Route::get('/fornecedores/edit/{id}', [FornecedorController::class, 'edit'])->name('fornecedores.edit');
     Route::get('/fornecedores/delete/{id}', [FornecedorController::class, 'delete'])->name('fornecedores.delete');
 
+    // Route::resource('produtos', "ProdutoController");
     Route::get('/produtos', [ProdutoController::class, 'index'])->name('produtos');
+    Route::get('/produtos/{create?}', [ProdutoController::class, 'index'])->name('produtos');
+    Route::post('/produtos/edit/{produtoId}', [ProdutoController::class, 'update'])->name('produtos.update');
+    Route::get('/produtos/edit/{id}', [ProdutoController::class, 'edit'])->name('produtos.edit');
+    Route::get('/produtos/delete/{id}', [ProdutoController::class, 'delete'])->name('produtos.delete');
 });

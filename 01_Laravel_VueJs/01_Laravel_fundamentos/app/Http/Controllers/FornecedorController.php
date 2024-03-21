@@ -90,4 +90,20 @@ class FornecedorController extends Controller
 
         return redirect("/app/fornecedores/$edit")->with(['msg' => $msg, 'msgClass' => $msgClass]);
     }
+
+    public function delete($fornecedorId)
+    {
+        try {
+            Fornecedor::find($fornecedorId)->delete();
+            // Fornecedor::find($fornecedorId)->forceDelete($data);
+            $msg = 'Fornecedor deletado com sucesso.';
+            $msgClass = 'success';
+        } catch (\Exception $e) {
+            dd($e);
+            $msg = 'Erro ao deletar fornecedor.';
+            $msgClass = 'danger';
+        }
+
+        return redirect("/app/fornecedores")->with(['msg' => $msg, 'msgClass' => $msgClass]);
+    }
 }
