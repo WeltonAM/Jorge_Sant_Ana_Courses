@@ -9,6 +9,8 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FornecedorController;
+use App\Http\Controllers\PedidoController;
+use App\Http\Controllers\PedidoProdutoController;
 use App\Http\Controllers\ProdutoController;
 use App\Http\Controllers\ProdutoDetalheController;
 
@@ -36,8 +38,6 @@ Route::middleware('autenticacao')->prefix('/app')->group(function() {
 
     Route::get('/sair', [LoginController::class, 'logout'])->name('sair');
 
-    Route::get('/clientes', [ClienteController::class, 'index'])->name('clientes');
-
     Route::post('/fornecedores', [FornecedorController::class, 'store'])->name('fornecedores.create');
     Route::get('/fornecedores/{create?}', [FornecedorController::class, 'index'])->name('fornecedores');
     Route::post('/fornecedores/edit/{fornecedorId}', [FornecedorController::class, 'update'])->name('fornecedores.update');
@@ -55,4 +55,19 @@ Route::middleware('autenticacao')->prefix('/app')->group(function() {
     Route::post('/produto-detalhe/edit/{id}', [ProdutoDetalheController::class, 'update'])->name('produto-detalhe.update');
     Route::get('/produto-detalhe/{id}/{create?}', [ProdutoDetalheController::class, 'index'])->name('produto-detalhe.index');
     Route::post('/produto-detalhe/{id}', [ProdutoDetalheController::class, 'store'])->name('produto-detalhe.store');
+
+    Route::post('/clientes', [ClienteController::class, 'store'])->name('cliente.store');
+    Route::get('/clientes/{create?}', [ClienteController::class, 'index'])->name('clientes');
+    Route::post('/clientes/edit/{id}', [ClienteController::class, 'update'])->name('cliente.update');
+    Route::get('/clientes/edit/{id}', [ClienteController::class, 'edit'])->name('cliente.edit');
+    Route::get('/clientes/delete/{id}', [ClienteController::class, 'delete'])->name('cliente.delete');
+
+    Route::post('/pedidos', [PedidoController::class, 'store'])->name('pedido.store');
+    Route::get('/pedidos/{create?}', [PedidoController::class, 'index'])->name('pedidos');
+    Route::post('/pedidos/edit/{id}', [PedidoController::class, 'update'])->name('pedido.update');
+    Route::get('/pedidos/edit/{id}', [PedidoController::class, 'edit'])->name('pedido.edit');
+    Route::get('/pedidos/delete/{id}', [PedidoController::class, 'delete'])->name('pedido.delete');
+
+    Route::get('/pedido-produto/{id}/{create?}', [PedidoProdutoController::class, 'index'])->name('pedido-produto.index');
+    Route::post('/pedido-produto/{id}', [PedidoProdutoController::class, 'store'])->name('pedido-produto.store');
 });

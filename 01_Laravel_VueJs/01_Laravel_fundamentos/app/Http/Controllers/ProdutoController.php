@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Item;
 use App\Models\Produto;
 use App\Models\Unidade;
 use Illuminate\Http\Request;
@@ -11,15 +12,15 @@ class ProdutoController extends Controller
 {
     public function index(Request $req)
     {
-        $produtos = Produto::all();
+        $produtos = Item::all();
         $unidades = Unidade::all();
 
         return view('app.produto.index', ['produtos' => $produtos, 'unidades' => $unidades, 'create' => $req['create'] ?? null]);
     }
 
-    protected function validateRequest(Request $request)
+    protected function validateRequest(Request $req)
     {
-        return Validator::make($request->all(), [
+        return Validator::make($req->all(), [
             'nome' => 'required|min:3|max:40',
             'descricao' => 'required|min:3|max:2000',
             'peso' => 'required|integer',
@@ -39,20 +40,20 @@ class ProdutoController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(Request $req)
     {
         $create = '';
 
-        $validator = $this->validateRequest($request);
+        $validator = $this->validateRequest($req);
 
         if ($validator->fails()) {
             return redirect('/app/produtos/create')->withErrors($validator)->withInput();
         }
 
-        $nome = $request->input('nome');
-        $descricao = $request->input('descricao');
-        $peso = $request->input('peso');
-        $unidade_id = $request->input('unidade');
+        $nome = $req->input('nome');
+        $descricao = $req->input('descricao');
+        $peso = $req->input('peso');
+        $unidade_id = $req->input('unidade');
 
         try {
             $produto = new Produto();
@@ -87,10 +88,10 @@ class ProdutoController extends Controller
         return view('app.produto.edit', compact(['produto', 'unidades']));
     }
 
-    public function update(Request $request, $produtoId)
+    public function update(Request $req, $produtoId)
     {
         $edit = '';
-        $validator = $this->validateRequest($request);
+        $validator = $this->validateRequest($req);
 
         if ($validator->fails()) {
             return redirect("/app/produtos/$produtoId/edit")->withErrors($validator)->withInput();
@@ -102,10 +103,10 @@ class ProdutoController extends Controller
                 return redirect()->route('produtos.index')->with(['msg' => 'Produto não encontrado.', 'msgClass' => 'danger']);
             }
 
-            $produto->nome = $request->input('nome');
-            $produto->descricao = $request->input('descricao');
-            $produto->peso = $request->input('peso');
-            $produto->unidade_id = $request->input('unidade');
+            $produto->nome = $req->input('nome');
+            $produto->descricao = $req->input('descricao');
+            $produto->peso = $req->input('peso');
+            $produto->unidade_id = $req->input('unidade');
 
             $produto->save();
 

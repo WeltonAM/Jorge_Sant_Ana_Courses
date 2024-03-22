@@ -18,6 +18,7 @@
                 ['rota' => route('produtos'), 'texto' => 'Produtos'],
                 ['rota' => route('clientes'), 'texto' => 'Clientes'],
                 ['rota' => route('fornecedores'), 'texto' => 'Fornecedores'],
+                ['rota' => route('pedidos'), 'texto' => 'Pedidos'],
                 ['rota' => route('sair'), 'texto' => 'Sair'],
             ]
         ])
