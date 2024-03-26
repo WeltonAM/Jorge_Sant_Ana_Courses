@@ -21,27 +21,13 @@ class MarcaController extends Controller
         return response()->json($marcas, 200);
     }
 
-    protected function validateRequest(Request $request)
-    {
-        return Validator::make($request->all(), [
-            'nome' => 'required|unique:marcas',
-            'imagem' => 'required'
-        ], [
-            'required' => 'O campo [:attribute] é obrigatório.',
-            'nome.unique' => 'O [nome] da marca já existe.',
-        ]);
-    }
-
     public function store(Request $request)
     {
-        $validator = $this->validateRequest($request);
+        $marca = $this->marca;
 
-        if ($validator->fails()) {
-            $errors = $validator->errors()->all();
-            return response()->json(['erro' => $errors], 422);
-        }
+        $request->validate($marca->rules(), $marca->feedback());
 
-        $marca = $this->marca->create($request->all());
+        $marca->create($request->all());
         return response()->json($marca, 201);
     }
 
@@ -58,17 +44,25 @@ class MarcaController extends Controller
 
     public function update(Request $request, Int $id)
     {
-        $validator = $this->validateRequest($request);
-
-        if ($validator->fails()) {
-            $errors = $validator->errors()->all();
-            return response()->json(['erro' => $errors], 422);
-        }
-
         $marca = $this->marca->find($id);
 
         if (!$marca) {
             return response()->json(['erro' => 'Marca não encontrada.'], 404);
+        }
+
+        if ($request->method() === 'PATCH') {
+
+            $regrasDinamicas = array();
+
+            foreach ($marca->rules() as $input => $regra) {
+                if (array_key_exists($input, $request->all())) {
+                    $regrasDinamicas[$input] = $regra;
+                }
+            }
+
+            $request->validate($regrasDinamicas, $marca->feedback());
+        } else {
+            $request->validate($marca->rules(), $marca->feedback());
         }
 
         $marca->update($request->all());
