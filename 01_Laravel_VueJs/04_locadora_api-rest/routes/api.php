@@ -10,3 +10,5 @@ Route::get('/user', function (Request $request) {
 Route::apiResource('/cliente', 'App\Http\Controllers\ClienteController');
 
 Route::apiResource('/carro', 'App\Http\Controllers\CarroController');
+
+Route::apiResource('/locacao', 'App\Http\Controllers\LocacaoController');
