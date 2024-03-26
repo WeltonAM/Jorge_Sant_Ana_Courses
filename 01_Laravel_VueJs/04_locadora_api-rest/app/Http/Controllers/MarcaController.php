@@ -20,7 +20,7 @@ class MarcaController extends Controller
 
     public function show(Marca $marca)
     {
-        return Marca::find($marca);
+        return $marca;
     }
 
     public function update(Request $request, Marca $marca)
