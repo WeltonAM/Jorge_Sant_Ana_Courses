@@ -12,22 +12,12 @@ class MarcaController extends Controller
         //
     }
 
-    public function create()
-    {
-        //
-    }
-
     public function store(Request $request)
     {
         //
     }
 
     public function show(Marca $marca)
-    {
-        //
-    }
-
-    public function edit(Marca $marca)
     {
         //
     }
