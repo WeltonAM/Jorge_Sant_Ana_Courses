@@ -7,31 +7,42 @@ use Illuminate\Http\Request;
 
 class MarcaController extends Controller
 {
+    protected $marca;
+
+    public function __construct(Marca $marca)
+    {
+        $this->marca = $marca;
+    }
+
     public function index()
     {
-        return Marca::all();
+        $marcas = $this->marca->all();
+        return $marcas;
     }
 
     public function store(Request $request)
     {
-        $marca = Marca::create($request->all());
+        $marca = $this->marca->create($request->all());
         return $marca;
     }
 
-    public function show(Marca $marca)
+    public function show(Int $id)
     {
+        $marca = $this->marca->find($id);
         return $marca;
     }
 
-    public function update(Request $request, Marca $marca)
+    public function update(Request $request, Int $id)
     {
+        $marca = $this->marca->find($id);
         $marca->update($request->all());
 
         return $marca;
     }
 
-    public function destroy(Marca $marca)
+    public function destroy(Int $id)
     {
+        $marca = $this->marca->find($id);
         $marca->delete();
 
         return ['msg' => 'A marca foi removida com sucesso!'];
