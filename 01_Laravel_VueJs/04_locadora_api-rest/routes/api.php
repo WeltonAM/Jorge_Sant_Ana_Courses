@@ -8,3 +8,5 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::apiResource('/cliente', 'App\Http\Controllers\ClienteController');
+
+Route::apiResource('/carro', 'App\Http\Controllers\CarroController');
