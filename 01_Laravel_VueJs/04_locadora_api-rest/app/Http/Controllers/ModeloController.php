@@ -82,10 +82,9 @@ class ModeloController extends Controller
         $imagem = $request->file('imagem');
         $imagem_urn = $imagem->store('imagens/modelos', 'public');
 
-        $modelo->update([
-            'nome' => $request['nome'],
-            'imagem' => $imagem_urn,
-        ]);
+        $modelo->fill($request->all());
+        $modelo->imagem = $imagem_urn;
+        $modelo->save();
 
         return response()->json($modelo, 200);
     }
