@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Modelo extends Model
 {
@@ -38,5 +39,10 @@ class Modelo extends Model
 
             'lugares.integer' => 'O [número de lugares] deve ter de 1 a 20.',
         ];
+    }
+
+    public function marca()
+    {
+        return $this->belongsTo('App\Models\Marca');
     }
 }
