@@ -7,6 +7,7 @@
 
                     <div class="card-body">
                         <form method="POST" action="">
+                            <input type="hidden" name="_token" :value="csrf_token">
                             <div class="row mb-3">
                                 <label for="email" class="col-md-4 col-form-label text-md-end">Email</label>
 
@@ -56,6 +57,7 @@
 
 <script>
     export default {
+        props: ['csrf_token'],
         mounted() {
             console.log('Component mounted.')
         }
