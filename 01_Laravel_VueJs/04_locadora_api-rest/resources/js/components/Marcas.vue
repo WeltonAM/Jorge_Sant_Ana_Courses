@@ -45,19 +45,26 @@
 
         <modal-component id="modalMarca" modalTitulo="Adicionar Marca">
             <template v-slot:conteudo>
-                <input-container id="novoNome" titulo="Marca" textoDeAjuda="Informe o Nome da Marca">
-                    <input id="novoNome" type="text" class="form-control" name="novoNome" aria-describedby="novoNome">
-                </input-container>
+                <div class="form-group">
+                    <input-container id="novoNomeMarca" titulo="Marca" textoDeAjuda="Informe o Nome da Marca">
+                        <input v-model="nomeMarca" id="novoNomeMarca" type="text" class="form-control"
+                            name="novoNomeMarca" aria-describedby="novoNomeMarca">
+                    </input-container>
+                    {{ nomeMarca }}
+                </div>
 
-                <input-container id="novaImagemMarca" titulo="Imagem" textoDeAjuda="Adicionar Imagem da Marca">
-                    <input id="novaImagemMarca" type="file" class="form-control-file mt-4" name="novaImagemMarca"
-                        aria-describedby="novaImagemMarca">
-                </input-container>
+                <div class="form-group">
+                    <input-container id="novaImagemMarca" titulo="Imagem" textoDeAjuda="Adicionar Imagem da Marca">
+                        <input @change="carregarImagem($event)" id="novaImagemMarca" type="file"
+                            class="form-control-file mt-4" name="novaImagemMarca" aria-describedby="novaImagemMarca">
+                    </input-container>
+                    {{ arquivoImagem }}
+                </div>
             </template>
 
             <template v-slot:rodape>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-                <button type="button" class="btn btn-primary">Salvar</button>
+                <button @click="salvar()" type="button" class="btn btn-primary">Salvar</button>
             </template>
         </modal-component>
     </div>
@@ -68,7 +75,32 @@ import InputContainer from './InputContainer.vue'
 import Modal from './Modal.vue'
 
 export default {
-    components: { InputContainer, Modal },
+    data() {
+        return {
+            urlBase: 'http://localhost/api/v1/marca',
+            nomeMarca: '',
+            arquivoImagem: [],
+        }
+    },
+    methods: {
+        carregarImagem(e) {
+            this.arquivoImagem = e.target.files
+        },
+        salvar() {
+            let formData = new FormData()
+            let config = {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Accept': 'application/json',
+                }
+            }
 
+            formData.append('nome', this.nomeMarca)
+            formData.append('imagem', this.arquivoImagem[0])
+
+            axios.post(this.urlBase, formData, config).then(res => res).catch(err => err)
+        }
+    },
+    components: { InputContainer, Modal },
 }
 </script>
