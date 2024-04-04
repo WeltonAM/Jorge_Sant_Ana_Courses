@@ -1,13 +1,11 @@
 <template>
-    <div class="col-md-6">
-        <label :for="id" class="col-form-label text-md-end">{{ titulo }}</label>
+    <label :for="id" class="col-form-label text-md-end">{{ titulo }}</label>
 
-        <slot></slot>
+    <slot></slot>
 
-        <!-- <input :id="id" :type="tipo" class="form-control" :name="id" :aria-describedby="id"> -->
+    <!-- <input :id="id" :type="tipo" class="form-control" :name="id" :aria-describedby="id"> -->
 
-        <div class="form-text" :id="id">{{ textoDeAjuda }}</div>
-    </div>
+    <div class="form-text" :id="id">{{ textoDeAjuda }}</div>
 </template>
 
 <script>
