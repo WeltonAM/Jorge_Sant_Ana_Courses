@@ -6,20 +6,23 @@
                     <template v-slot:card-body>
                         <div class="px-4">
                             <input-container id="inputId" titulo="Id">
-                                <input id="inputId" type="number" placeholder="Informe o ID da Marca"
+                                <input v-model="busca.id" id="inputId" type="number" placeholder="Informe o ID da Marca"
                                     class="form-control w-100" name="inputId" aria-describedby="idHelp" min="0">
                             </input-container>
 
                             <input-container id="inputNomeMarca" titulo="Marca">
-                                <input id="inputNomeMarca" type="text" placeholder="Informe o Nome da Marca"
-                                    class="form-control w-100" name="inputNomeMarca" aria-describedby="inputNomeMarca">
+                                <input v-model="busca.nome" id="inputNomeMarca" type="text"
+                                    placeholder="Informe o Nome da Marca" class="form-control w-100"
+                                    name="inputNomeMarca" aria-describedby="inputNomeMarca">
                             </input-container>
                         </div>
                     </template>
 
                     <template v-slot:card-footer>
-                        <div class="d-flex justify-content-end">
-                            <button type="submit" class="btn btn-sm btn-primary ml-auto">Pesquisar</button>
+                        <div class="d-flex justify-content-end gap-3">
+                            <a v-if="urlFiltro" class="btn btn-sm btn-primary ml-auto" href="/marcas">Limpar</a>
+                            <button @click="pesquisar()" type="submit"
+                                class="btn btn-sm btn-primary ml-auto">Pesquisar</button>
                         </div>
                     </template>
                 </card-component>
@@ -101,6 +104,8 @@ export default {
     data() {
         return {
             urlBase: 'http://localhost:8000/api/v1/marca',
+            urlPaginacao: '',
+            urlFiltro: '',
             nomeMarca: '',
             arquivoImagem: [],
             transacaoStatus: '',
@@ -108,12 +113,23 @@ export default {
             marcas: { data: [] },
             marcasLoading: false,
             salvarLoading: false,
+            busca: { id: '', nome: '' },
         }
     },
     methods: {
+        pesquisar() {
+            const filtro = Object.keys(this.busca)
+                .filter(chave => this.busca[chave])
+                .map(chave => `${chave}:like:${this.busca[chave]}`)
+                .join(';');
+
+            this.urlFiltro = filtro ? `&filtro=${filtro}` : '';
+
+            this.carregarLista()
+        },
         paginacao(link) {
             if (link.url) {
-                this.urlBase = link.url
+                this.urlPaginacao = link.url.split('?')[1]
                 this.carregarLista()
             }
         },
@@ -121,8 +137,10 @@ export default {
             const config = this.getTokenConfig()
             this.marcasLoading = true
 
+            let url = this.urlBase + '?' + this.urlPaginacao + this.urlFiltro
+
             try {
-                const res = await axios.get(this.urlBase, config)
+                const res = await axios.get(url, config)
                 const data = res.data
                 this.marcas = data
             } catch (error) {
