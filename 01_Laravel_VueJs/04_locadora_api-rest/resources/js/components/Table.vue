@@ -3,7 +3,7 @@
         <thead>
             <tr>
                 <th v-for="(t, chave) in titulos" :key="chave" scope="col">{{ t.titulo }}</th>
-                <th class="text-end" v-if="atualizarBtn || visualizarBtn.visivel || removerBtn">Ações</th>
+                <th class="text-end" v-if="atualizarBtn || visualizarBtn.visivel || removerBtn.visivel">Ações</th>
             </tr>
         </thead>
         <tbody>
@@ -29,7 +29,8 @@
                                     d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7" />
                             </svg>
                         </button>
-                        <button v-if="atualizarBtn" class="btn btn-sm btn-secondary" title="Editar">
+                        <button v-if="atualizarBtn" class="btn btn-sm btn-secondary" title="Editar"
+                            :data-toggle="visualizarBtn.dataToggle" :data-target="visualizarBtn.dataTarget">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                 class="bi bi-pencil-square" viewBox="0 0 16 16">
                                 <path
@@ -38,7 +39,8 @@
                                     d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
                             </svg>
                         </button>
-                        <button v-if="removerBtn" class="btn btn-sm btn-danger" title="Excluir">
+                        <button @click="setStore(obj)" v-if="removerBtn.visivel" class="btn btn-sm btn-danger"
+                            title="Excluir" :data-toggle="removerBtn.dataToggle" :data-target="removerBtn.dataTarget">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                 class="bi bi-trash-fill" viewBox="0 0 16 16">
                                 <path
@@ -58,6 +60,8 @@ export default {
     props: ['dados', 'titulos', 'visualizarBtn', 'atualizarBtn', 'removerBtn',],
     methods: {
         setStore(obj) {
+            this.$store.state.transacao.status = ''
+            this.$store.state.transacao.mensagem = ''
             this.$store.state.item = obj
         }
     },

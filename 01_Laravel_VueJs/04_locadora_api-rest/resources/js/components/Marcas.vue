@@ -36,7 +36,8 @@
                                 nome: { titulo: 'Nome', tipo: 'text' },
                                 imagem: { titulo: 'Imagem', tipo: 'text' },
                             }" :visualizarBtn="{ visivel: true, dataToggle: 'modal', dataTarget: '#modalMarcaView' }"
-                                :atualizarBtn="true" :removerBtn="true"></table-component>
+                                :atualizarBtn="true"
+                                :removerBtn="{ visivel: true, dataToggle: 'modal', dataTarget: '#modalMarcaDelete' }"></table-component>
                         </div>
                     </template>
 
@@ -110,6 +111,48 @@
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
             </template>
         </modal-component>
+
+        <modal-component id="modalMarcaDelete" :modalTitulo="'Deletar Marca: ' + $store.state.item.nome">
+            <template v-slot:icon>
+                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="text-danger"
+                    viewBox="0 0 16 16">
+                    <path
+                        d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2" />
+                </svg>
+            </template>
+
+            <template v-slot:alertas>
+                <div class="d-flex flex-col justify-content-center">
+                    <div v-if="erroLoading" class="spinner-border text-primary" role="status"></div>
+                    <alert-component class="w-100" v-else-if="$store.state.transacao.status"
+                        :tipo="$store.state.transacao.status" :titulo="$store.state.transacao.mensagem"
+                        :detalhes="transacaoDetalhes"></alert-component>
+                </div>
+            </template>
+
+            <template v-slot:conteudo>
+                <input-container id="ID" titulo="Id">
+                    <input disabled :value="$store.state.item.id" id="idMarca" type="text" class="form-control"
+                        name="idMarca" aria-describedby="idMarca">
+                </input-container>
+
+                <input-container id="Nome" titulo="Marca">
+                    <input disabled :value="$store.state.item.nome" id="editNomeMarca" titulo="Nome da Marca"
+                        type="text" class="form-control" name="editNomeMarca" aria-describedby="editNomeMarca">
+                </input-container>
+
+                <input-container id="Imagem" :textoDeAjuda="'Logo ' + $store.state.item.nome">
+                    <img v-if="$store.state.item.imagem" :src="'storage/' + $store.state.item.imagem"
+                        :alt="'Logo ' + $store.state.item.nome" width="40" height="auto">
+                </input-container>
+            </template>
+
+            <template v-slot:rodape>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button :disabled="botaoDeletarAtivo" @click="deletarMarca($store.state.item.id)" type="button"
+                    class="btn btn-danger">Deletar</button>
+            </template>
+        </modal-component>
     </div>
 </template>
 
@@ -137,17 +180,47 @@ export default {
             marcas: { data: [] },
             marcasLoading: false,
             salvarLoading: false,
+            erroLoading: false,
+            botaoDeletarAtivo: false,
             busca: { id: '', nome: '' },
         }
     },
     methods: {
+        deletarMarca(marcaId) {
+            const url = this.urlBase + '/' + marcaId
+
+            const config = this.getTokenConfig()
+
+            let formData = new FormData();
+            formData.append('_method', 'delete')
+
+            this.erroLoading = true
+
+            axios.post(url, formData).then(res => { // Consuming REST_API by AXIOS
+                this.$store.state.transacao.status = 'success'
+                this.$store.state.transacao.mensagem = 'Marca deletada com sucesso!'
+
+                this.botaoDeletarAtivo = true
+
+                setTimeout(() => {
+                    window.location.href = 'http://localhost:8000/marcas'
+                }, 3000)
+
+                this.erroLoading = false
+            }).catch(err => {
+                this.$store.state.transacao.status = 'danger'
+                this.$store.state.transacao.mensagem = 'Erro ao deletar Marca'
+                this.$transacaoDetalhes = err.response.data
+                this.erroLoading = false
+            })
+        },
         pesquisar() {
             const filtro = Object.keys(this.busca)
                 .filter(chave => this.busca[chave])
                 .map(chave => `${chave}:like:${this.busca[chave]}`)
-                .join(';');
+                .join(';')
 
-            this.urlFiltro = filtro ? `&filtro=${filtro}` : '';
+            this.urlFiltro = filtro ? `&filtro=${filtro}` : ''
 
             this.carregarLista()
         },
@@ -164,8 +237,8 @@ export default {
             let url = this.urlBase + '?' + this.urlPaginacao + this.urlFiltro
 
             try {
-                const res = await axios.get(url, config)
-                const data = res.data
+                const res = await fetch(url, config)
+                const data = await res.json()
                 this.marcas = data
             } catch (error) {
                 console.error('Erro ao carregar lista:', error)
@@ -182,7 +255,8 @@ export default {
             formData.append('imagem', this.arquivoImagem[0])
 
             axios.post(this.urlBase, formData, config).then(res => { // Consuming REST_API by AXIOS
-                this.transacaoStatus = 'adicionado'
+                this.$store.state.item.status = 'success'
+                this.$store.state.item.mensagem = 'Marca cadastrada com sucesso!'
                 this.transacaoDetalhes = {
                     mensagem: 'ID do registro: ' + res.data.id
                 }
@@ -198,7 +272,7 @@ export default {
         getTokenConfig() {
             return {
                 headers: {
-                    'Content-Type': 'multipart/form-data',
+                    // 'Content-Type': 'multipart/form-data',
                     'Accept': 'application/json',
                     'Authorization': this.token,
                 }
