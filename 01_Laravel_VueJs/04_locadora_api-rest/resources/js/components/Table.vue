@@ -2,30 +2,20 @@
     <table class="table table-striped table-hover">
         <thead>
             <tr>
-                <th scope="col">#</th>
-                <th scope="col">First</th>
-                <th scope="col">Last</th>
-                <th scope="col">Handle</th>
+                <th v-for="(t, chave) in titulos" :key="chave" scope="col">{{ t.titulo }}
+                </th>
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <th scope="row">1</th>
-                <td>Mark</td>
-                <td>Otto</td>
-                <td>@mdo</td>
-            </tr>
-            <tr>
-                <th scope="row">2</th>
-                <td>Jacob</td>
-                <td>Thornton</td>
-                <td>@fat</td>
-            </tr>
-            <tr>
-                <th scope="row">3</th>
-                <td>Larry</td>
-                <td>the Bird</td>
-                <td>@twitter</td>
+            <tr v-for="obj in dados" :key="obj.id">
+                <td v-for="(_, chave) in titulos" :key="chave">
+                    <template v-if="chave === 'imagem'">
+                        <img :src="'storage/' + obj[chave]" alt="Imagem" width="40" height="auto" />
+                    </template>
+                    <template v-else>
+                        {{ obj[chave] }}
+                    </template>
+                </td>
             </tr>
         </tbody>
     </table>
@@ -33,6 +23,6 @@
 
 <script>
 export default {
-    props: ['id', 'titulo', 'textoDeAjuda']
-}
+    props: ['dados', 'titulos']
+};
 </script>

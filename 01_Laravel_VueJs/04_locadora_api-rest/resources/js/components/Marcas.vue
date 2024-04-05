@@ -27,7 +27,12 @@
                 <card-component textoCabecalho="Relação de Marcas">
                     <template v-slot:card-body>
                         <div class="d-flex justify-content-center gap-3">
-                            <table-component></table-component>
+                            <div v-if="marcasLoading" class="spinner-border text-primary" role="status"></div>
+                            <table-component v-else :dados="marcas" :titulos="{
+                                id: { titulo: 'Id', tipo: 'text' },
+                                nome: { titulo: 'Nome', tipo: 'text' },
+                                imagem: { titulo: 'Imagem', tipo: 'text' },
+                            }"></table-component>
                         </div>
                     </template>
 
@@ -45,12 +50,14 @@
 
         <modal-component id="modalMarca" modalTitulo="Adicionar Marca">
             <template v-slot:alertas>
-                <alert-component v-if="transacaoStatus == 'adicionado'" tipo="success"
-                    titulo="Marca cadastrada com sucesso!" :detalhes="transacaoDetalhes"></alert-component>
-                <alert-component v-if="transacaoStatus == 'erro'" tipo="danger"
-                    titulo="Erro ao tentar cadastrar a marca" :detalhes="transacaoDetalhes"></alert-component>
+                <div class="d-flex flex-col justify-content-center">
+                    <div v-if="salvarLoading" class="spinner-border text-primary" role="status"></div>
+                    <alert-component class="w-100" v-else-if="transacaoStatus == 'adicionado'" tipo="success"
+                        titulo="Marca cadastrada com sucesso!" :detalhes="transacaoDetalhes"></alert-component>
+                    <alert-component class="w-100" v-else-if="transacaoStatus == 'erro'" tipo="danger"
+                        titulo="Erro ao tentar cadastrar a marca" :detalhes="transacaoDetalhes"></alert-component>
+                </div>
             </template>
-
 
             <template v-slot:conteudo>
                 <input-container id="novoNomeMarca" titulo="Marca">
@@ -74,7 +81,6 @@
 
 <script>
 import InputContainer from './InputContainer.vue'
-import Modal from './Modal.vue'
 
 export default {
     computed: {
@@ -92,39 +98,66 @@ export default {
             arquivoImagem: [],
             transacaoStatus: '',
             transacaoDetalhes: {},
+            marcas: [],
+            marcasLoading: false,
+            salvarLoading: false,
         }
     },
     methods: {
-        carregarImagem(e) {
-            this.arquivoImagem = e.target.files
+        async carregarLista() {
+            const config = this.getTokenConfig()
+            this.marcasLoading = true
+
+            try {
+                const res = await axios.get(this.urlBase, config)
+                const data = res.data
+                this.marcas = data
+            } catch (error) {
+                console.error('Erro ao carregar lista:', error)
+            } finally {
+                this.marcasLoading = false
+            }
         },
         salvar() {
             let formData = new FormData()
-            let config = {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                    'Accept': 'application/json',
-                    'Authorization': this.token,
-                }
-            }
+            const config = this.getTokenConfig()
+            this.salvarLoading = true
 
             formData.append('nome', this.nomeMarca)
             formData.append('imagem', this.arquivoImagem[0])
 
-            axios.post(this.urlBase, formData, config).then(res => {
+            axios.post(this.urlBase, formData, config).then(res => { // Consuming REST_API by AXIOS
                 this.transacaoStatus = 'adicionado'
                 this.transacaoDetalhes = {
                     mensagem: 'ID do registro: ' + res.data.id
                 }
-                console.log(res)
             }).catch(err => {
                 this.transacaoStatus = 'erro'
                 this.transacaoDetalhes = {
                     mensagem: err.response.data.errors ? err.response.data.errors[Object.keys(err.response.data.errors)[0]][0] : err.response.data.message
                 }
-            })
-        }
+            }).finally(() => {
+                this.salvarLoading = false;
+            });
+        },
+        getTokenConfig() {
+            return {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Accept': 'application/json',
+                    'Authorization': this.token,
+                }
+            };
+        },
+        carregarImagem(e) {
+            this.arquivoImagem = e.target.files
+        },
     },
-    components: { InputContainer, Modal },
+    mounted() {
+        this.carregarLista()
+    },
+    components: {
+        InputContainer
+    }
 }
 </script>
