@@ -35,7 +35,8 @@
                                 id: { titulo: 'Id', tipo: 'text' },
                                 nome: { titulo: 'Nome', tipo: 'text' },
                                 imagem: { titulo: 'Imagem', tipo: 'text' },
-                            }" :visualizarBtn="true" :atualizarBtn="true" :removerBtn="true"></table-component>
+                            }" :visualizarBtn="{ visivel: true, dataToggle: 'modal', dataTarget: '#modalMarcaView' }"
+                                :atualizarBtn="true" :removerBtn="true"></table-component>
                         </div>
                     </template>
 
@@ -84,6 +85,29 @@
             <template v-slot:rodape>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
                 <button @click="salvar()" type="button" class="btn btn-primary">Salvar</button>
+            </template>
+        </modal-component>
+
+        <modal-component id="modalMarcaView" :modalTitulo="'Marca: ' + $store.state.item.nome">
+            <template v-slot:conteudo>
+                <input-container id="ID" titulo="Id">
+                    <input disabled :value="$store.state.item.id" id="idMarca" type="text" class="form-control"
+                        name="idMarca" aria-describedby="idMarca">
+                </input-container>
+
+                <input-container id="Nome" titulo="Marca">
+                    <input disabled :value="$store.state.item.nome" id="editNomeMarca" titulo="Nome da Marca"
+                        type="text" class="form-control" name="editNomeMarca" aria-describedby="editNomeMarca">
+                </input-container>
+
+                <input-container id="Imagem" :textoDeAjuda="'Logo ' + $store.state.item.nome">
+                    <img v-if="$store.state.item.imagem" :src="'storage/' + $store.state.item.imagem"
+                        :alt="'Logo ' + $store.state.item.nome" width="40" height="auto">
+                </input-container>
+            </template>
+
+            <template v-slot:rodape>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
             </template>
         </modal-component>
     </div>

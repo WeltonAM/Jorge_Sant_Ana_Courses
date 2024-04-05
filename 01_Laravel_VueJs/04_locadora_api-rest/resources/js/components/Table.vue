@@ -3,7 +3,7 @@
         <thead>
             <tr>
                 <th v-for="(t, chave) in titulos" :key="chave" scope="col">{{ t.titulo }}</th>
-                <th class="text-end" v-if="atualizarBtn || visualizarBtn || removerBtn">Ações</th>
+                <th class="text-end" v-if="atualizarBtn || visualizarBtn.visivel || removerBtn">Ações</th>
             </tr>
         </thead>
         <tbody>
@@ -19,7 +19,9 @@
 
                 <td class="text-end">
                     <div class="btn-group" role="group">
-                        <button v-if="visualizarBtn" class="btn btn-sm btn-primary" title="Visualizar">
+                        <button @click="setStore(obj)" v-if="visualizarBtn.visivel" class="btn btn-sm btn-primary"
+                            title="Visualizar" :data-toggle="visualizarBtn.dataToggle"
+                            :data-target="visualizarBtn.dataTarget">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                 class="bi bi-eye-fill" viewBox="0 0 16 16">
                                 <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0" />
@@ -53,6 +55,11 @@
 
 <script>
 export default {
-    props: ['dados', 'titulos', 'visualizarBtn', 'atualizarBtn', 'removerBtn',]
+    props: ['dados', 'titulos', 'visualizarBtn', 'atualizarBtn', 'removerBtn',],
+    methods: {
+        setStore(obj) {
+            this.$store.state.item = obj
+        }
+    },
 };
 </script>
