@@ -7,7 +7,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr v-for="obj in dados" :key="obj.id">
+            <tr v-for="obj in dados.data" :key="obj.id">
                 <td v-for="(_, chave) in titulos" :key="chave">
                     <template v-if="chave === 'imagem'">
                         <img :src="'storage/' + obj[chave]" alt="Imagem" width="40" height="auto" />

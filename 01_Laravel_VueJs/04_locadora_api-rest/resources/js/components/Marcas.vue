@@ -37,8 +37,15 @@
                     </template>
 
                     <template v-slot:card-footer>
-                        <div class="d-flex justify-content-end mt-3">
-                            <button type="submit" class="btn btn-sm btn-primary ml-auto" data-toggle="modal"
+                        <div class="d-flex align-items-center justify-content-between mt-3">
+                            <paginate-component>
+                                <li v-for="(link, chave) in marcas.links"
+                                    :class="link.active ? 'page-item active' : 'page-item'" :key="chave">
+                                    <button @click="paginacao(link)" class="page-link" v-html="link.label"></button>
+                                </li>
+                            </paginate-component>
+
+                            <button type="submit" class="btn btn-sm btn-primary" data-toggle="modal"
                                 data-target="#modalMarca">
                                 Adicionar
                             </button>
@@ -98,13 +105,19 @@ export default {
             arquivoImagem: [],
             transacaoStatus: '',
             transacaoDetalhes: {},
-            marcas: [],
+            marcas: { data: [] },
             marcasLoading: false,
             salvarLoading: false,
         }
     },
     methods: {
-        async carregarLista() {
+        paginacao(link) {
+            if (link.url) {
+                this.urlBase = link.url
+                this.carregarLista()
+            }
+        },
+        async carregarLista() { // Consuming REST_API by ASYNCHRONOUS
             const config = this.getTokenConfig()
             this.marcasLoading = true
 
