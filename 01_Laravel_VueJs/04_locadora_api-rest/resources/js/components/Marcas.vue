@@ -44,6 +44,10 @@
         </div>
 
         <modal-component id="modalMarca" modalTitulo="Adicionar Marca">
+            <template v-slot:alertas>
+                <alert-component tipo="success"></alert-component>
+            </template>
+
             <template v-slot:conteudo>
                 <input-container id="novoNomeMarca" titulo="Marca">
                     <input v-model="nomeMarca" id="novoNomeMarca" placeholder="Informe o Nome da Marca" type="text"
