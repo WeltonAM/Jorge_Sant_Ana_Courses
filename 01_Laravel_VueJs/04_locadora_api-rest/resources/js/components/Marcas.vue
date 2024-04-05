@@ -35,7 +35,7 @@
                                 id: { titulo: 'Id', tipo: 'text' },
                                 nome: { titulo: 'Nome', tipo: 'text' },
                                 imagem: { titulo: 'Imagem', tipo: 'text' },
-                            }"></table-component>
+                            }" :visualizarBtn="true" :atualizarBtn="true" :removerBtn="true"></table-component>
                         </div>
                     </template>
 
