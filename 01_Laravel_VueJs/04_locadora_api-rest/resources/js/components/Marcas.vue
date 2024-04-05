@@ -48,7 +48,7 @@
                 <alert-component v-if="transacaoStatus == 'adicionado'" tipo="success"
                     titulo="Marca cadastrada com sucesso!" :detalhes="transacaoDetalhes"></alert-component>
                 <alert-component v-if="transacaoStatus == 'erro'" tipo="danger"
-                    titulo="Erro ao tentar cadastrar a marca." :detalhes="transacaoDetalhes"></alert-component>
+                    titulo="Erro ao tentar cadastrar a marca" :detalhes="transacaoDetalhes"></alert-component>
             </template>
 
 
@@ -91,7 +91,7 @@ export default {
             nomeMarca: '',
             arquivoImagem: [],
             transacaoStatus: '',
-            transacaoDetalhes: [],
+            transacaoDetalhes: {},
         }
     },
     methods: {
@@ -104,7 +104,7 @@ export default {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     'Accept': 'application/json',
-                    'Authorizartion': this.token,
+                    'Authorization': this.token,
                 }
             }
 
@@ -113,10 +113,15 @@ export default {
 
             axios.post(this.urlBase, formData, config).then(res => {
                 this.transacaoStatus = 'adicionado'
-                this.transacaoDetalhes = res
+                this.transacaoDetalhes = {
+                    mensagem: 'ID do registro: ' + res.data.id
+                }
+                console.log(res)
             }).catch(err => {
                 this.transacaoStatus = 'erro'
-                this.transacaoDetalhes = err.response
+                this.transacaoDetalhes = {
+                    mensagem: err.response.data.errors ? err.response.data.errors[Object.keys(err.response.data.errors)[0]][0] : err.response.data.message
+                }
             })
         }
     },
