@@ -73,30 +73,26 @@ class MarcaController extends Controller
             return response()->json(['erro' => 'Marca não encontrada.'], 404);
         }
 
-        if ($request->method() === 'PATCH') {
+        if ($request->filled('nome')) {
+            $request->validate([
+                'nome' => 'required|unique:marcas,nome,' . $marca->id . '|min:3',
+            ], $marca->feedback());
 
-            $regrasDinamicas = array();
+            $marca->nome = $request->nome;
+        } else if ($request->hasFile('imagem')) {
+            $request->validate([
+                'imagem' => 'required|file|mimes:png,jpg,jpeg',
+            ], $marca->feedback());
 
-            foreach ($marca->rules() as $input => $regra) {
-                if (array_key_exists($input, $request->all())) {
-                    $regrasDinamicas[$input] = $regra;
-                }
-            }
+            Storage::disk('public')->delete($marca->imagem);
 
-            $request->validate($regrasDinamicas, $marca->feedback());
-        } else {
+            $imagem = $request->file('imagem');
+            $imagem_urn = $imagem->store('imagens', 'public');
+            $marca->imagem = $imagem_urn;
+        } else if (!$request->filled('nome') && !$request->hasFile('imagem')) {
             $request->validate($marca->rules(), $marca->feedback());
         }
 
-        if ($request->file('imagem')) {
-            Storage::disk('public')->delete($marca->imagem);
-        }
-
-        $imagem = $request->file('imagem');
-        $imagem_urn = $imagem->store('imagens', 'public');
-
-        $marca->fill($request->all());
-        $marca->imagem = $imagem_urn;
         $marca->save();
 
         return response()->json($marca, 200);
@@ -106,8 +102,13 @@ class MarcaController extends Controller
     {
         $marca = $this->marca->find($id);
 
-        if (!$marca) {
+        if ($marca === null) {
             return response()->json(['erro' => 'Marca não encontrada.'], 404);
+        }
+
+        $modelos = $marca->modelos;
+        if ($modelos->isNotEmpty()) {
+            return response()->json(['erro' => 'Esta marca possui modelos associados. Exclua os modelos primeiro.'], 422);
         }
 
         Storage::disk('public')->delete($marca->imagem);

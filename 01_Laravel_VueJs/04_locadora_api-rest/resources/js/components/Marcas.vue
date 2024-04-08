@@ -36,7 +36,7 @@
                                 nome: { titulo: 'Nome', tipo: 'text' },
                                 imagem: { titulo: 'Imagem', tipo: 'text' },
                             }" :visualizarBtn="{ visivel: true, dataToggle: 'modal', dataTarget: '#modalMarcaView' }"
-                                :atualizarBtn="true"
+                                :atualizarBtn="{ visivel: true, dataToggle: 'modal', dataTarget: '#modalMarcaUpdate' }"
                                 :removerBtn="{ visivel: true, dataToggle: 'modal', dataTarget: '#modalMarcaDelete' }"></table-component>
                         </div>
                     </template>
@@ -137,8 +137,8 @@
                 </input-container>
 
                 <input-container id="Nome" titulo="Marca">
-                    <input disabled :value="$store.state.item.nome" id="editNomeMarca" titulo="Nome da Marca"
-                        type="text" class="form-control" name="editNomeMarca" aria-describedby="editNomeMarca">
+                    <input disabled :value="$store.state.item.nome" id="deleteNomeMarca" titulo="Nome da Marca"
+                        type="text" class="form-control" name="deleteNomeMarca" aria-describedby="deleteNomeMarca">
                 </input-container>
 
                 <input-container id="Imagem" :textoDeAjuda="'Logo ' + $store.state.item.nome">
@@ -149,8 +149,58 @@
 
             <template v-slot:rodape>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                <button :disabled="botaoDeletarAtivo" @click="deletarMarca($store.state.item.id)" type="button"
+                <button :disabled="botaoAtivo" @click="deletarMarca($store.state.item.id)" type="button"
                     class="btn btn-danger">Deletar</button>
+            </template>
+        </modal-component>
+
+        <modal-component id="modalMarcaUpdate" :modalTitulo="'Atualizar Marca: ' + $store.state.item.nome">
+            <template v-slot:icon>
+                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor"
+                    class="bi bi-pencil-square text-info" viewBox="0 0 16 16">
+                    <path
+                        d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                    <path fill-rule="evenodd"
+                        d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
+                </svg>
+            </template>
+
+            <template v-slot:alertas>
+                <div class="d-flex flex-col justify-content-center">
+                    <div v-if="atualizaLoading" class="spinner-border text-primary" role="status"></div>
+                    <alert-component class="w-100" v-else-if="$store.state.transacao.status"
+                        :tipo="$store.state.transacao.status" :titulo="$store.state.transacao.mensagem"
+                        :detalhes="transacaoDetalhes"></alert-component>
+                </div>
+            </template>
+
+            <template v-slot:conteudo>
+                <input-container id="ID" titulo="Id">
+                    <input disabled :value="$store.state.item.id" id="idMarca" type="text" class="form-control"
+                        name="idMarca" aria-describedby="idMarca">
+                </input-container>
+
+                <input-container id="Nome" titulo="Marca">
+                    <input v-model="nomeMarca" id="editNomeMarca" :placeholder="$store.state.item.nome" titulo="Nome da
+                        Marca" type="text" class="form-control" name="editNomeMarca" aria-describedby="editNomeMarca">
+                </input-container>
+
+                <input-container id="imagemMarca" textoDeAjuda="Adicionar Imagem da Marca">
+                    <input @change="carregarImagem($event)" id="atualizaImagemMarca" type="file"
+                        class="form-control-file mt-4" name="atualizaImagemMarca"
+                        aria-describedby="atualizaImagemMarca">
+                </input-container>
+
+                <input-container id="Imagem" :textoDeAjuda="'Logo ' + $store.state.item.nome">
+                    <img v-if="$store.state.item.imagem" :src="'storage/' + $store.state.item.imagem"
+                        :alt="'Logo ' + $store.state.item.nome" width="40" height="auto">
+                </input-container>
+            </template>
+
+            <template v-slot:rodape>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button :disabled="botaoAtivo" @click="atualizarMarca($store.state.item.id)" type="button"
+                    class="btn btn-danger">Atualizar</button>
             </template>
         </modal-component>
     </div>
@@ -181,11 +231,55 @@ export default {
             marcasLoading: false,
             salvarLoading: false,
             erroLoading: false,
-            botaoDeletarAtivo: false,
+            atualizaLoading: false,
+            botaoAtivo: false,
             busca: { id: '', nome: '' },
         }
     },
     methods: {
+        atualizarMarca(marcaId) {
+            const url = this.urlBase + '/' + marcaId
+            const config = this.getTokenConfig()
+
+            let formData = new FormData()
+            formData.append('_method', 'patch')
+            formData.append('nome', this.nomeMarca)
+
+            if (this.arquivoImagem[0]) {
+                formData.append('imagem', this.arquivoImagem[0])
+            }
+
+            this.atualizaLoading = true
+
+            axios.post(url, formData, config).then(res => {
+                this.$store.state.transacao.status = 'success'
+                this.$store.state.transacao.mensagem = 'Marca atualizada com sucesso!'
+
+                this.botaoAtivo = true
+
+                setTimeout(() => {
+                    window.location.href = 'http://localhost:8000/marcas'
+                }, 3000)
+
+                this.atualizaLoading = false
+            }).catch(err => {
+                this.$store.state.transacao.status = 'danger'
+                this.$store.state.transacao.mensagem = 'Erro ao atualizar Marca'
+
+                if (err.response.data.errors) {
+                    const primeiroErro = err.response.data.errors[Object.keys(err.response.data.errors)[0]][0]
+                    this.transacaoDetalhes = {
+                        mensagem: primeiroErro
+                    }
+                } else {
+                    this.transacaoDetalhes = {
+                        mensagem: err.response.data.message
+                    }
+                }
+
+                this.atualizaLoading = false
+            })
+        },
         deletarMarca(marcaId) {
             const url = this.urlBase + '/' + marcaId
 
@@ -196,11 +290,11 @@ export default {
 
             this.erroLoading = true
 
-            axios.post(url, formData).then(res => { // Consuming REST_API by AXIOS
+            axios.post(url, formData, config).then(res => { // Consuming REST_API by AXIOS
                 this.$store.state.transacao.status = 'success'
                 this.$store.state.transacao.mensagem = 'Marca deletada com sucesso!'
 
-                this.botaoDeletarAtivo = true
+                this.botaoAtivo = true
 
                 setTimeout(() => {
                     window.location.href = 'http://localhost:8000/marcas'
@@ -210,7 +304,9 @@ export default {
             }).catch(err => {
                 this.$store.state.transacao.status = 'danger'
                 this.$store.state.transacao.mensagem = 'Erro ao deletar Marca'
-                this.$transacaoDetalhes = err.response.data
+                this.transacaoDetalhes = {
+                    mensagem: err.response.data.erro
+                }
                 this.erroLoading = false
             })
         },
@@ -272,7 +368,7 @@ export default {
         getTokenConfig() {
             return {
                 headers: {
-                    // 'Content-Type': 'multipart/form-data',
+                    'Content-Type': 'multipart/form-data',
                     'Accept': 'application/json',
                     'Authorization': this.token,
                 }
