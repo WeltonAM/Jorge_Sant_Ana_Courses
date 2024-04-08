@@ -64,10 +64,9 @@
             <template v-slot:alertas>
                 <div class="d-flex flex-col justify-content-center">
                     <div v-if="salvarLoading" class="spinner-border text-primary" role="status"></div>
-                    <alert-component class="w-100" v-else-if="transacaoStatus == 'adicionado'" tipo="success"
-                        titulo="Marca cadastrada com sucesso!" :detalhes="transacaoDetalhes"></alert-component>
-                    <alert-component class="w-100" v-else-if="transacaoStatus == 'erro'" tipo="danger"
-                        titulo="Erro ao tentar cadastrar a marca" :detalhes="transacaoDetalhes"></alert-component>
+                    <alert-component class="w-100" v-else-if="$store.state.transacao.status"
+                        :tipo="$store.state.transacao.status" :titulo="$store.state.transacao.mensagem"
+                        :detalhes="transacaoDetalhes"></alert-component>
                 </div>
             </template>
 
@@ -85,7 +84,7 @@
 
             <template v-slot:rodape>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-                <button @click="salvar()" type="button" class="btn btn-primary">Salvar</button>
+                <button :disabled="botaoAtivo" @click="salvar()" type="button" class="btn btn-primary">Salvar</button>
             </template>
         </modal-component>
 
@@ -210,14 +209,6 @@
 import InputContainer from './InputContainer.vue'
 
 export default {
-    computed: {
-        token() {
-            const tokenMatch = document.cookie.match(/token=([^;]+)/)
-            const token = `Bearer ${tokenMatch[1]}`
-
-            return token
-        }
-    },
     data() {
         return {
             urlBase: 'http://localhost:8000/api/v1/marca',
@@ -239,7 +230,11 @@ export default {
     methods: {
         atualizarMarca(marcaId) {
             const url = this.urlBase + '/' + marcaId
-            const config = this.getTokenConfig()
+            const config = {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            }
 
             let formData = new FormData()
             formData.append('_method', 'patch')
@@ -266,14 +261,14 @@ export default {
                 this.$store.state.transacao.status = 'danger'
                 this.$store.state.transacao.mensagem = 'Erro ao atualizar Marca'
 
-                if (err.response.data.errors) {
-                    const primeiroErro = err.response.data.errors[Object.keys(err.response.data.errors)[0]][0]
+                if (err.data.errors) {
+                    const primeiroErro = err.data.errors[Object.keys(err.data.errors)[0]][0]
                     this.transacaoDetalhes = {
                         mensagem: primeiroErro
                     }
                 } else {
                     this.transacaoDetalhes = {
-                        mensagem: err.response.data.message
+                        mensagem: err.data.message
                     }
                 }
 
@@ -283,14 +278,12 @@ export default {
         deletarMarca(marcaId) {
             const url = this.urlBase + '/' + marcaId
 
-            const config = this.getTokenConfig()
-
             let formData = new FormData();
             formData.append('_method', 'delete')
 
             this.erroLoading = true
 
-            axios.post(url, formData, config).then(res => { // Consuming REST_API by AXIOS
+            axios.post(url, formData).then(res => { // Consuming REST_API by AXIOS
                 this.$store.state.transacao.status = 'success'
                 this.$store.state.transacao.mensagem = 'Marca deletada com sucesso!'
 
@@ -305,7 +298,7 @@ export default {
                 this.$store.state.transacao.status = 'danger'
                 this.$store.state.transacao.mensagem = 'Erro ao deletar Marca'
                 this.transacaoDetalhes = {
-                    mensagem: err.response.data.erro
+                    mensagem: err.data.erro
                 }
                 this.erroLoading = false
             })
@@ -327,13 +320,12 @@ export default {
             }
         },
         async carregarLista() { // Consuming REST_API by ASYNCHRONOUS
-            const config = this.getTokenConfig()
             this.marcasLoading = true
 
             let url = this.urlBase + '?' + this.urlPaginacao + this.urlFiltro
 
             try {
-                const res = await fetch(url, config)
+                const res = await fetch(url)
                 const data = await res.json()
                 this.marcas = data
             } catch (error) {
@@ -343,19 +335,30 @@ export default {
             }
         },
         salvar() {
-            let formData = new FormData()
-            const config = this.getTokenConfig()
-            this.salvarLoading = true
+            const config = {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            }
 
+            let formData = new FormData()
             formData.append('nome', this.nomeMarca)
             formData.append('imagem', this.arquivoImagem[0])
 
+            this.salvarLoading = true
             axios.post(this.urlBase, formData, config).then(res => { // Consuming REST_API by AXIOS
-                this.$store.state.item.status = 'success'
-                this.$store.state.item.mensagem = 'Marca cadastrada com sucesso!'
+                this.$store.state.transacao.status = 'success'
+                this.$store.state.transacao.mensagem = 'Marca cadastrada com sucesso!'
+
                 this.transacaoDetalhes = {
                     mensagem: 'ID do registro: ' + res.data.id
                 }
+
+                this.botaoAtivo = true
+
+                setTimeout(() => {
+                    window.location.href = 'http://localhost:8000/marcas'
+                }, 3000)
             }).catch(err => {
                 this.transacaoStatus = 'erro'
                 this.transacaoDetalhes = {
@@ -364,15 +367,6 @@ export default {
             }).finally(() => {
                 this.salvarLoading = false;
             });
-        },
-        getTokenConfig() {
-            return {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                    'Accept': 'application/json',
-                    'Authorization': this.token,
-                }
-            };
         },
         carregarImagem(e) {
             this.arquivoImagem = e.target.files

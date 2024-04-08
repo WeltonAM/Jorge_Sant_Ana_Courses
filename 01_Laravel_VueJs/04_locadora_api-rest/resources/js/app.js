@@ -24,22 +24,24 @@ const store = createStore({
 });
 app.use(store)
 
-app.filter('formataDataTempoGlobal', function(d) {
-    if(!d) return ''
+app.config.globalProperties.$filters = {
+    formataDataTempoGlobal(d) {
+        if (!d) return ''
 
-    d = d.split('T')
+        d = d.split('T')
 
-    let data = d[0]
-    let tempo = d[1]
+        let data = d[0]
+        let tempo = d[1]
 
-    data = data.split('-')
-    data = data[2] + '/' + data[1] + '/' + data[0]
+        data = data.split('-')
+        data = data[2] + '/' + data[1] + '/' + data[0]
 
-    tempo = tempo.split('.')
-    tempo = tempo[0]
+        tempo = tempo.split('.')
+        tempo = tempo[0]
 
-    return data + ' ' + tempo
-})
+        return data + ' ' + tempo
+    }
+}
 
 import Login from './components/Login.vue';
 app.component('login-component', Login);

@@ -32,3 +32,38 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 //     forceTLS: (import.meta.env.VITE_PUSHER_SCHEME ?? 'https') === 'https',
 //     enabledTransports: ['ws', 'wss'],
 // });
+
+axios.interceptors.request.use(
+    config => {
+        config.headers['Accept'] = 'application/json'
+
+        const tokenMatch = document.cookie.match(/token=([^;]+)/)
+        const token = `Bearer ${tokenMatch[1]}`
+
+        config.headers.authorization = token
+
+        return config
+    },
+
+    error => {
+        return Promise.reject(error)
+    }
+)
+
+axios.interceptors.response.use(
+    response => {
+        return response
+    },
+
+    error => {
+        if(error.response.status == 401 && error.response.data.message == 'Token has expired') {
+            axios.post('http://localhost:8000/api/refresh')
+                .then(res => {
+                    document.cookie = 'token=' + res.data.token
+                    window.location.reload()
+                })
+        }
+
+        return Promise.reject(error.response)
+    }
+)
