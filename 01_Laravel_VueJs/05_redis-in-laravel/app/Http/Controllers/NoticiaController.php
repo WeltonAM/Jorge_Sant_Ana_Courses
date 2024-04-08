@@ -15,11 +15,8 @@ class NoticiaController extends Controller
      */
     public function index()
     {
-        //criar um dado dentro do bd Redis
-        //Cache::put('site', 'jorgesantana.net.br', 10);
-        //chave, valor, tempo em segundos para expirar o dado em memória
+        //Cache::put('site', 'https://welton-matos-dev-portfolio.vercel.app/', 10);
 
-        //recuperar um dado dentro do bd Redis
         //$site = Cache::get('site');
         //echo $site;
 
