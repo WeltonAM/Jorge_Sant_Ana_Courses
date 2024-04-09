@@ -33,22 +33,22 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 //     enabledTransports: ['ws', 'wss'],
 // });
 
-axios.interceptors.request.use(
-    config => {
-        config.headers['Accept'] = 'application/json'
+// axios.interceptors.request.use(
+//     config => {
+//         config.headers['Accept'] = 'application/json'
 
-        const tokenMatch = document.cookie.match(/token=([^;]+)/)
-        const token = `Bearer ${tokenMatch[1]}`
+//         const tokenMatch = document.cookie.match(/token=([^;]+)/)
+//         const token = `Bearer ${tokenMatch[1]}`
 
-        config.headers.authorization = token
+//         config.headers.authorization = token
 
-        return config
-    },
+//         return config
+//     },
 
-    error => {
-        return Promise.reject(error)
-    }
-)
+//     error => {
+//         return Promise.reject(error)
+//     }
+// )
 
 axios.interceptors.response.use(
     response => {
